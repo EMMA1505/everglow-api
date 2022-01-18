@@ -1,41 +1,37 @@
 const { ObjectId } = require('mongodb');
-const express = require('express')
-const router = express.Router()
-const getClient = require('../db/mongodb')
+const express = require('express');
+const router = express.Router();
+const getClient = require('../db/mongodb');
 
 router.get('/services', (req, res) => {
     getClient((err, db) => {
-        if (err) return res.send(err)
+        if (err) return res.send(err);
         db.collection('services').find().toArray((err, result) => {
-            if (err) return res.send(err)
-            return res.send(result)
-        })
-    })
-})
+            if (err) return res.send(err);
+            return res.send(result);
+        });
+    });
+});
 
 router.post('/service', (req, res) => {
-    const ar = []
+    const ar = [];
     ar.push(req.body);
-    req.body.created = new Date()
+    req.body.created = new Date();
 
     getClient((err, db) => {
-        if (err) return res.send(err)
+        if (err) return res.send(err);
         db.collection('services').insertMany(ar, (err, result) => {
-            if (err) return res.send(err)
-            return res.send(result)
-        })
-    })
-})
+            if (err) return res.send(err);
+            return res.send(result);
+        });
+    });
+});
 
 router.patch('/service/:id', (req, res) => {
     const { id } = req.params;
     const { price } = req.body;
     getClient((err, db) => {
-        if(err) return res.status(500).send(err);
-        // updateOne({1}, {2}, cb)
-        // {1} => A quién quiero actualizar
-        // {2} => Qué quiero modificar
-        // cb => Callback
+        if(err) return res.status(500).send(err);        
         db.collection('services').updateOne(
             { _id: new ObjectId(id)}, 
             { $set: { price } },
@@ -48,7 +44,6 @@ router.patch('/service/:id', (req, res) => {
 });
 
 router.delete('/service/:id', (req, res) => {
-    // Me conecto
     const id = req.params;
     getClient((err, db) => {
         if (err) return res.status(500).send(err);
